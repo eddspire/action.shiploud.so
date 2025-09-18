@@ -1,0 +1,26 @@
+name: 'shiploud.so Action Export'
+description: 'Automatically export your commit history to shiploud.so for instant, beautiful developer cards'
+author: 'shiploud.so'
+
+branding:
+  icon: 'git-commit'
+  color: 'blue'
+
+inputs:
+  api-token:
+    description: 'shiploud.so API token from your dashboard'
+    required: true
+  github-token:
+    description: 'GitHub token for API access (defaults to GITHUB_TOKEN)'
+    required: false
+  ingest-url:
+    description: 'Override ingest endpoint (defaults to SHIPLOUD_INGEST_URL or production URL)'
+    required: false
+
+outputs:
+  commits:
+    description: 'Number of commits processed'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js' 
