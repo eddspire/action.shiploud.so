@@ -30011,6 +30011,8 @@ async function run() {
             let addedFiles = [];
             let modifiedFiles = [];
             let removedFiles = [];
+            let additions;
+            let deletions;
             if (octokit) {
                 try {
                     core.info(`📡 Fetching file changes for commit ${commit.id.substring(0, 7)} via GitHub API`);
@@ -30022,7 +30024,11 @@ async function run() {
                     addedFiles = commitDetails.data.files?.filter(f => f.status === 'added').map(f => f.filename) || [];
                     modifiedFiles = commitDetails.data.files?.filter(f => f.status === 'modified').map(f => f.filename) || [];
                     removedFiles = commitDetails.data.files?.filter(f => f.status === 'removed').map(f => f.filename) || [];
+                    // Extract line-level statistics
+                    additions = commitDetails.data.stats?.additions;
+                    deletions = commitDetails.data.stats?.deletions;
                     core.info(`✅ Found ${addedFiles.length} added, ${modifiedFiles.length} modified, ${removedFiles.length} removed files`);
+                    core.info(`📊 Stats: +${additions ?? 0} -${deletions ?? 0} lines`);
                 }
                 catch (error) {
                     core.warning(`Failed to fetch commit details for ${commit.id}: ${error}`);
@@ -30046,6 +30052,8 @@ async function run() {
                 },
                 timestamp: commit.timestamp,
                 url: `https://github.com/${context.repo.owner}/${context.repo.repo}/commit/${commit.id}`,
+                additions,
+                deletions,
                 files: {
                     added: addedFiles,
                     modified: modifiedFiles,
